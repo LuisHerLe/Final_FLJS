@@ -126,7 +126,18 @@ function setup(start){
   }
 }
 
+function endGame(){
+  // NOTE: Punto 4: Se oculta el tablero de juego y el tiempo, adicional se agranda al 100% el ancho del panel de puntos
+  $(".time").hide(1000,"swing");
+  $(".panel-tablero").hide(1000,"swing", function(){
+    $(".panel-score").animate({width:'100%'},1500);
+  });
 
+  // NOTE: Se crea nuevo div para indicar que se acabó el Juego
+  var rowEnd = $("<div class='main-container'><p class = 'score'>End Game!</p></div>")
+  var gameName = $(".main-titulo")
+  rowEnd.appendTo(gameName);
+}
 
 // NOTE: Buscar igualdades para mandar eliminar ****EN CONSTRUCCIÓN****
 function findMatch(){
