@@ -79,15 +79,18 @@ function getRowCandies(){
   }
   if (i == 8 && r ==8) {
 
-    setInterval(function(){findMatch()},150)
+    //setInterval(function(){findHorizontal()},150);
+    setInterval(function(){findVertical()},150);
   }
 }
 
 function getImgCandies(rowNew){
-  var candyRandom = Math.round(Math.random()*4);
-    while (candyRandom == 0) {
-      candyRandom = Math.round(Math.random()*4)
-    }
+  // TODO: CAMBIAR!!!!!!!!!
+  //var candyRandom = Math.round(Math.random()*4);
+  var candyRandom = 1;
+  while (candyRandom == 0) {
+    candyRandom = Math.round(Math.random()*4)
+  }
   var newCandy = "image/"+candyRandom+".png"
   rowNew.find("img").attr("src",newCandy);
 }
@@ -137,22 +140,39 @@ function endGame(){
 }
 
 // NOTE: Buscar igualdades para mandar eliminar ****EN CONSTRUCCIÓN****
-function findMatch(){
+function findVertical(){
+  for (var i = 1; i < 8; i++) {
+    var colMatch1 = "";
+    var colMatch2 = "";
+    var colMatch3 = "";
+    //Se recorren las columnas
+    for (var r = 0; r < 7; r++) {
+      var aux = r+1;
+      colMatch1=$(".panel-tablero .col-"+(i)).children().children().get(+(r)).attributes[0]
+        colMatch2=$(".panel-tablero .col-"+(i)).children().children().get(+(r+1)).attributes[0]
+        colMatch3=$(".panel-tablero .col-"+(i)).children().children().get(+(r+2)).attributes[0]
+
+      //var colMatch3=$(".col-"+(r+2)).children("img:nth-child("+i+")").attr("src")
+
+      if (colMatch1 != null && colMatch2 != null && colMatch3 != null){
+        if (colMatch1.value == colMatch2.value && colMatch2.value == colMatch3.value){
+          colMatch1=$(".panel-tablero .col-"+(1)).children()
+          colMatch2=$(".panel-tablero .col-"+(1)).children()
+          colMatch3=$(".panel-tablero .col-"+(1)).children()
+
+          //setInterval(deleteCandies,1500) // TODO: Crear función deleteCandies
+          console.log("Si hay coincidencias de columna " + i + " Fila " + r);
+        }
+      }
+    }
+  }
+}
+
+function findHorizontal(){
   for (var i = 1; i < 8; i++) {
     var colName = ".panel-tablero .col-"+i
     //Se recorren las columnas
     for (var r = 1; r < 8; r++) {
-    var colMatch1=$(".col-"+r).children("img:nth-child("+i+")").attr("src")
-      var colMatch2=$(".col-"+(r+1)).children("img:nth-child("+i+")").attr("src")
-      var colMatch3=$(".col-"+(r+2)).children("img:nth-child("+i+")").attr("src")
-
-      if (colMatch1 != null && colMatch2 != null && colMatch3 != null){
-        if (colMatch1 == colMatch2 && colMatch2 == colMatch3){
-          console.log("Si hay coincidencias de columnas");
-          //setInterval(deleteCandies,1500) // TODO: Crear función deleteCandies
-        }
-      }
-
       //Se recorren las filas
       var rowMatch1=$(".row-"+r).children("img:nth-last-child("+i+")").attr("src")
       var rowMatch2=$(".row-"+(r+1)).children("img:nth-last-child("+i+")").attr("src")
