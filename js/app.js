@@ -4,7 +4,7 @@ $(document).ready(function(){
   // ********************** INICIO VARIABLES GLOBALES **********************
 
   var countMov=0;
-
+  var listDelete = new  Array();
   // ********************** FIN VARIABLES GLOBALES **********************
 
   var start = false;
@@ -80,14 +80,15 @@ function getRowCandies(){
   if (i == 8 && r ==8) {
 
     //setInterval(function(){findHorizontal()},150);
-    setInterval(function(){findVertical()},150);
+    //  setInterval(function(){findVertical()},150);
+    findVertical();
   }
 }
 
 function getImgCandies(rowNew){
   // TODO: CAMBIAR!!!!!!!!!
-  //var candyRandom = Math.round(Math.random()*4);
-  var candyRandom = 1;
+  var candyRandom = Math.round(Math.random()*4);
+  //var candyRandom = 1; //Para pruebas
   while (candyRandom == 0) {
     candyRandom = Math.round(Math.random()*4)
   }
@@ -145,48 +146,72 @@ function findVertical(){
     var colMatch1 = "";
     var colMatch2 = "";
     var colMatch3 = "";
-    //Se recorren las columnas
-    for (var r = 0; r < 7; r++) {
-      var aux = r+1;
-      colMatch1=$(".panel-tablero .col-"+(i)).children().children().get(+(r)).attributes[0]
+
+    try {
+      //Se recorren las columnas
+      for (var r = 0; r < 7; r++) {
+        var aux = listDelete.length;
+        colMatch1=$(".panel-tablero .col-"+(i)).children().children().get(+(r)).attributes[0]
         colMatch2=$(".panel-tablero .col-"+(i)).children().children().get(+(r+1)).attributes[0]
         colMatch3=$(".panel-tablero .col-"+(i)).children().children().get(+(r+2)).attributes[0]
 
-      //var colMatch3=$(".col-"+(r+2)).children("img:nth-child("+i+")").attr("src")
+        //var colMatch3=$(".col-"+(r+2)).children("img:nth-child("+i+")").attr("src")
 
-      if (colMatch1 != null && colMatch2 != null && colMatch3 != null){
-        if (colMatch1.value == colMatch2.value && colMatch2.value == colMatch3.value){
-          colMatch1=$(".panel-tablero .col-"+(1)).children()
-          colMatch2=$(".panel-tablero .col-"+(1)).children()
-          colMatch3=$(".panel-tablero .col-"+(1)).children()
+        if (colMatch1 != null && colMatch2 != null && colMatch3 != null){
+          if (colMatch1.value == colMatch2.value && colMatch2.value == colMatch3.value){
+            colMatch1=$(".panel-tablero .col-"+(i)).children().get(r);
+            colMatch2=$(".panel-tablero .col-"+(i)).children().get(r+1);
+            colMatch3=$(".panel-tablero .col-"+(i)).children().get(r+2);
 
-          //setInterval(deleteCandies,1500) // TODO: Crear función deleteCandies
-          console.log("Si hay coincidencias de columna " + i + " Fila " + r);
+            //setInterval(deleteCandies,1500) // TODO: Crear función deleteCandies
+            console.log("Si hay coincidencias de columna " + i + " Fila " + r);
+            if (aux == 0) {
+              listDelete[aux] = colMatch1;
+              listDelete[aux++] = colMatch2;
+              listDelete[aux++] = colMatch3;
+            }else {
+              listDelete[aux++] = colMatch1;
+              listDelete[aux++] = colMatch2;
+              listDelete[aux++] = colMatch3;
+            }
+            for (var i = 0; i < listDelete.length; i++) {
+              console.log(listDelete[i]);
+            }
+          }
         }
       }
+    } catch (e) {
+      console.log("Error al ubicar una columna: " + e.message);
     }
   }
 }
 
 function findHorizontal(){
-  for (var i = 1; i < 8; i++) {
-    var colName = ".panel-tablero .col-"+i
-    //Se recorren las columnas
-    for (var r = 1; r < 8; r++) {
-      //Se recorren las filas
-      var rowMatch1=$(".row-"+r).children("img:nth-last-child("+i+")").attr("src")
-      var rowMatch2=$(".row-"+(r+1)).children("img:nth-last-child("+i+")").attr("src")
-      var rowMatch3=$(".row-"+(r+2)).children("img:nth-last-child("+i+")").attr("src")
+  var rowMatch1 = "";
+  var rowMatch2 = "";
+  var rowMatch3 = "";
 
-      if (rowMatch1 != null && rowMatch2 != null && rowMatch3 != null){
-        if (rowMatch1 == rowMatch2 && rowMatch2 == rowMatch3){
-          console.log("Si hay coincidencias de filas");
-          rowMatch1=$(".row-"+r).children("img:nth-last-child("+i+")");
-          rowMatch2=$(".row-"+(r+1)).children("img:nth-last-child("+i+")");
-          rowMatch3=$(".row-"+(r+2)).children("img:nth-last-child("+i+")")
-          setInterval(deleteCandies(rowMatch1,rowMatch2,rowMatch3),1500);
+  for (var i = 1; i < 8; i++) {
+    try {
+      //Se recorren las filas
+      for (var r = 1; r < 8; r++) {
+        //Se recorren las filas
+        rowMatch1=$(".row-"+r).children("img:nth-last-child("+i+")").attr("src")
+        rowMatch2=$(".row-"+(r+1)).children("img:nth-last-child("+i+")").attr("src")
+        rowMatch3=$(".row-"+(r+2)).children("img:nth-last-child("+i+")").attr("src")
+
+        if (rowMatch1 != null && rowMatch2 != null && rowMatch3 != null){
+          if (rowMatch1 == rowMatch2 && rowMatch2 == rowMatch3){
+            console.log("Si hay coincidencias de filas");
+            rowMatch1=$(".row-"+r).children("img:nth-last-child("+i+")");
+            rowMatch2=$(".row-"+(r+1)).children("img:nth-last-child("+i+")");
+            rowMatch3=$(".row-"+(r+2)).children("img:nth-last-child("+i+")")
+            setInterval(deleteCandies(rowMatch1,rowMatch2,rowMatch3),1500);
+          }
         }
       }
+    } catch (e) {
+      console.log("Error al ubicar una fila: " + e.message);
     }
   }
 }
