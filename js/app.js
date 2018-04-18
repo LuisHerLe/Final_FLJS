@@ -216,7 +216,7 @@ function findHorizontal(listDelete){
     try {
       //Se recorren las columnas
       for (var l = 0; l < 7; l++) {
-        aux = listDelete.length + r;
+        aux = listDelete.length + l;
         rowMatch1=$(".panel-tablero .col-"+(l)).children().children().get(+(i)).attributes[0]
         rowMatch2=$(".panel-tablero .col-"+(l+1)).children().children().get(+(i+1)).attributes[0]
         rowMatch3=$(".panel-tablero .col-"+(l+2)).children().children().get(+(i+2)).attributes[0]
