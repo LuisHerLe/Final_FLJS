@@ -5,6 +5,8 @@ $(document).ready(function(){
 
   var countMov=0;
   var listDelete = new  Array();
+  var findedH = "";
+  var findedV = "";
   // ********************** FIN VARIABLES GLOBALES **********************
 
   var start = false;
@@ -142,15 +144,19 @@ function endGame(){
 
 // NOTE: Buscar igualdades para mandar eliminar ****EN CONSTRUCCIÓN****
 function findVertical(){
+
+  var colMatch1 = "";
+  var colMatch2 = "";
+  var colMatch3 = "";
+
+  var aux = listDelete.length;
+
   for (var i = 1; i < 8; i++) {
-    var colMatch1 = "";
-    var colMatch2 = "";
-    var colMatch3 = "";
 
     try {
       //Se recorren las columnas
       for (var r = 0; r < 7; r++) {
-        var aux = listDelete.length;
+        aux = aux + r;
         colMatch1=$(".panel-tablero .col-"+(i)).children().children().get(+(r)).attributes[0]
         colMatch2=$(".panel-tablero .col-"+(i)).children().children().get(+(r+1)).attributes[0]
         colMatch3=$(".panel-tablero .col-"+(i)).children().children().get(+(r+2)).attributes[0]
@@ -164,18 +170,21 @@ function findVertical(){
             colMatch3=$(".panel-tablero .col-"+(i)).children().get(r+2);
 
             //setInterval(deleteCandies,1500) // TODO: Crear función deleteCandies
-            console.log("Si hay coincidencias de columna " + i + " Fila " + r);
-            if (aux == 0) {
-              listDelete[aux] = colMatch1;
-              listDelete[aux++] = colMatch2;
-              listDelete[aux++] = colMatch3;
-            }else {
-              listDelete[aux++] = colMatch1;
-              listDelete[aux++] = colMatch2;
-              listDelete[aux++] = colMatch3;
-            }
-            for (var i = 0; i < listDelete.length; i++) {
-              console.log(listDelete[i]);
+            try {
+              console.log("Si hay coincidencias de columna " + i + " Fila " + r);
+              if (aux == 0 ) {
+                listDelete[aux] = colMatch1;
+                listDelete[aux+1] = colMatch2;
+                listDelete[aux+2] = colMatch3;
+              }else {
+                listDelete[aux+1] = colMatch1;
+                listDelete[aux+2] = colMatch2;
+                listDelete[aux+3] = colMatch3;
+              }
+
+
+            } catch (e) {
+              console.log("No se puede agregar a la lista el elemento a eliminar: " + e.message);
             }
           }
         }
@@ -184,6 +193,13 @@ function findVertical(){
       console.log("Error al ubicar una columna: " + e.message);
     }
   }
+
+// TODO: Eliminar log
+  for (var i = 0; i < listDelete.length; i++) {
+    console.log(listDelete[i]);
+  }
+  return findedV;
+
 }
 
 function findHorizontal(){
