@@ -1,14 +1,6 @@
 
 $(document).ready(function(){
 
-  // ********************** INICIO VARIABLES GLOBALES **********************
-
-  var countMov=0;
-  var listDelete = new  Array();
-  var findedH = "";
-  var findedV = "";
-  // ********************** FIN VARIABLES GLOBALES **********************
-
   var start = false;
   // NOTE: Punto 1: Animación del título Match Game #DCFF0E
   setInterval(function(){
@@ -19,7 +11,14 @@ $(document).ready(function(){
   // NOTE: Punto 2: Se generan las imágenes de forma aleatoria
   setInterval(getRowCandies(),1000);
 })
-//
+// ********************** INICIO VARIABLES GLOBALES **********************
+
+var countMov=0;
+var listDelete = [""];
+var findedH = "";
+var findedV = "";
+var aux = "";
+// ********************** FIN VARIABLES GLOBALES **********************
 
 // NOTE:Punto 6. Se inicia juego o se reinicia contenido al dar click al botón cuando este diga "Reiniciar"
 $(".btn-reinicio").click(function(){
@@ -83,7 +82,8 @@ function getRowCandies(){
 
     //setInterval(function(){findHorizontal()},150);
     //  setInterval(function(){findVertical()},150);
-    findVertical();
+    findVertical(listDelete);
+    findHorizontal(listDelete);
   }
 }
 
@@ -143,7 +143,7 @@ function endGame(){
 }
 
 // NOTE: Buscar igualdades para mandar eliminar ****EN CONSTRUCCIÓN****
-function findVertical(){
+function findVertical(listDelete){
 
   var colMatch1 = "";
   var colMatch2 = "";
@@ -196,44 +196,73 @@ function findVertical(){
 
 // TODO: Eliminar log
   for (var i = 0; i < listDelete.length; i++) {
+    console.log("Horizontal" + i);
     console.log(listDelete[i]);
   }
-  return findedV;
+  return listDelete;
 
 }
 
-function findHorizontal(){
+function findHorizontal(listDelete){
+
   var rowMatch1 = "";
   var rowMatch2 = "";
   var rowMatch3 = "";
 
+  var aux = listDelete.length;
+
   for (var i = 1; i < 8; i++) {
+
     try {
-      //Se recorren las filas
-      for (var r = 1; r < 8; r++) {
-        //Se recorren las filas
-        rowMatch1=$(".row-"+r).children("img:nth-last-child("+i+")").attr("src")
-        rowMatch2=$(".row-"+(r+1)).children("img:nth-last-child("+i+")").attr("src")
-        rowMatch3=$(".row-"+(r+2)).children("img:nth-last-child("+i+")").attr("src")
+      //Se recorren las columnas
+      for (var l = 0; l < 7; l++) {
+        aux = listDelete.length + r;
+        rowMatch1=$(".panel-tablero .col-"+(l)).children().children().get(+(i)).attributes[0]
+        rowMatch2=$(".panel-tablero .col-"+(l+1)).children().children().get(+(i+1)).attributes[0]
+        rowMatch3=$(".panel-tablero .col-"+(l+2)).children().children().get(+(i+2)).attributes[0]
 
         if (rowMatch1 != null && rowMatch2 != null && rowMatch3 != null){
-          if (rowMatch1 == rowMatch2 && rowMatch2 == rowMatch3){
-            console.log("Si hay coincidencias de filas");
-            rowMatch1=$(".row-"+r).children("img:nth-last-child("+i+")");
-            rowMatch2=$(".row-"+(r+1)).children("img:nth-last-child("+i+")");
-            rowMatch3=$(".row-"+(r+2)).children("img:nth-last-child("+i+")")
-            setInterval(deleteCandies(rowMatch1,rowMatch2,rowMatch3),1500);
+          if (rowMatch1.value == rowMatch2.value && rowMatch2.value == rowMatch3.value){
+            rowMatch1=$(".panel-tablero .col-"+(l)).children().get(i);
+            rowMatch2=$(".panel-tablero .col-"+(l+1)).children().get(i);
+            rowMatch3=$(".panel-tablero .col-"+(l+2)).children().get(i);
+
+            try {
+              console.log("Si hay coincidencias de fila " + i + " columna " + r);
+              if (aux == 0 ) {
+                listDelete[aux] = rowMatch1;
+                listDelete[aux+1] = rowMatch2;
+                listDelete[aux+2] = rowMatch3;
+              }else {
+                listDelete[aux+1] = rowMatch1;
+                listDelete[aux+2] = rowMatch2;
+                listDelete[aux+3] = rowMatch3;
+              }
+
+
+            } catch (e) {
+              console.log("No se puede agregar a la lista el elemento a eliminar: " + e.message);
+            }
           }
         }
       }
     } catch (e) {
-      console.log("Error al ubicar una fila: " + e.message);
+      console.log("Error al ubicar una columna: " + e.message);
     }
   }
+
+// TODO: Eliminar log
+  for (var i = 0; i < listDelete.length; i++) {
+    console.log("Horizontal" + i);
+    console.log(listDelete[i]);
+  }
+  return listDelete;
+
 }
 
 // NOTE: ***********************************************************
 
+// TODO: Generar método para eliminar dulces
 function deleteCandies(rowMatch1,rowMatch2,rowMatch3){
 
 }
