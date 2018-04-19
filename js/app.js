@@ -10,11 +10,12 @@ $(document).ready(function(){
 
   // NOTE: Punto 2: Se generan las imágenes de forma aleatoria
   setInterval(getRowCandies(),1000);
+
 })
 // ********************** INICIO VARIABLES GLOBALES **********************
 
 var countMov=0;
-var listDelete = [""];
+var listDelete = new Array();
 var findedH = "";
 var findedV = "";
 var aux = "";
@@ -84,6 +85,7 @@ function getRowCandies(){
     //  setInterval(function(){findVertical()},150);
     findVertical(listDelete);
     findHorizontal(listDelete);
+    //deleteCandies(listDelete);
   }
 }
 
@@ -149,14 +151,14 @@ function findVertical(listDelete){
   var colMatch2 = "";
   var colMatch3 = "";
 
-  var aux = listDelete.length;
+  var aux = "";
 
   for (var i = 1; i < 8; i++) {
 
     try {
       //Se recorren las columnas
       for (var r = 0; r < 7; r++) {
-        aux = aux + r;
+        aux = listDelete.length + r;
         colMatch1=$(".panel-tablero .col-"+(i)).children().children().get(+(r)).attributes[0]
         colMatch2=$(".panel-tablero .col-"+(i)).children().children().get(+(r+1)).attributes[0]
         colMatch3=$(".panel-tablero .col-"+(i)).children().children().get(+(r+2)).attributes[0]
@@ -165,11 +167,11 @@ function findVertical(listDelete){
 
         if (colMatch1 != null && colMatch2 != null && colMatch3 != null){
           if (colMatch1.value == colMatch2.value && colMatch2.value == colMatch3.value){
-            colMatch1=$(".panel-tablero .col-"+(i)).children().get(r);
-            colMatch2=$(".panel-tablero .col-"+(i)).children().get(r+1);
-            colMatch3=$(".panel-tablero .col-"+(i)).children().get(r+2);
+            colMatch1=$(".panel-tablero .col-"+(i)).children().get(r).firstElementChild;
+            colMatch2=$(".panel-tablero .col-"+(i)).children().get(r+1).firstElementChild;
+            colMatch3=$(".panel-tablero .col-"+(i)).children().get(r+2).firstElementChild;
 
-            //setInterval(deleteCandies,1500) // TODO: Crear función deleteCandies
+
             try {
               console.log("Si hay coincidencias de columna " + i + " Fila " + r);
               if (aux == 0 ) {
@@ -194,10 +196,10 @@ function findVertical(listDelete){
     }
   }
 
-// TODO: Eliminar log
   for (var i = 0; i < listDelete.length; i++) {
-    console.log("Horizontal" + i);
-    console.log(listDelete[i]);
+    if (listDelete[i] != null) {
+      //listDelete[i].remove();
+    }
   }
   return listDelete;
 
@@ -209,36 +211,41 @@ function findHorizontal(listDelete){
   var rowMatch2 = "";
   var rowMatch3 = "";
 
-  var aux = listDelete.length;
+  var aux = "";
 
   for (var i = 1; i < 8; i++) {
 
     try {
       //Se recorren las columnas
       for (var l = 0; l < 7; l++) {
-        aux = listDelete.length + l;
-        rowMatch1=$(".panel-tablero .col-"+(l)).children().children().get(+(i)).attributes[0]
-        rowMatch2=$(".panel-tablero .col-"+(l+1)).children().children().get(+(i+1)).attributes[0]
-        rowMatch3=$(".panel-tablero .col-"+(l+2)).children().children().get(+(i+2)).attributes[0]
+        if (listDelete.length ==0) {
+          aux = listDelete.length;
+        }else {
+          aux = listDelete.length + 1;
+        }
+
+        rowMatch1=$(".panel-tablero .col-"+(i)).children().children().get(+(l)).attributes[0]
+        rowMatch2=$(".panel-tablero .col-"+(i+1)).children().children().get(+(l)).attributes[0]
+        rowMatch3=$(".panel-tablero .col-"+(i+2)).children().children().get(+(l)).attributes[0]
 
         if (rowMatch1 != null && rowMatch2 != null && rowMatch3 != null){
           if (rowMatch1.value == rowMatch2.value && rowMatch2.value == rowMatch3.value){
-            rowMatch1=$(".panel-tablero .col-"+(l)).children().get(i);
-            rowMatch2=$(".panel-tablero .col-"+(l+1)).children().get(i);
-            rowMatch3=$(".panel-tablero .col-"+(l+2)).children().get(i);
+            rowMatch1=$(".panel-tablero .col-"+(i)).children().children().get(+(l));
+            rowMatch2=$(".panel-tablero .col-"+(i+1)).children().children().get(+(l));
+            rowMatch3=$(".panel-tablero .col-"+(i+2)).children().children().get(+(l));
 
             try {
-              console.log("Si hay coincidencias de fila " + i + " columna " + r);
-              if (aux == 0 ) {
-                listDelete[aux] = rowMatch1;
-                listDelete[aux+1] = rowMatch2;
-                listDelete[aux+2] = rowMatch3;
-              }else {
-                listDelete[aux+1] = rowMatch1;
-                listDelete[aux+2] = rowMatch2;
-                listDelete[aux+3] = rowMatch3;
-              }
 
+              if (aux == 0 ) {
+                listDelete[aux] = $(".panel-tablero .col-"+(i)).children().get(+(l)).firstElementChild;
+                listDelete[aux+1] = $(".panel-tablero .col-"+(i+1)).children().get(+(l)).firstElementChild;
+                listDelete[aux+2] = $(".panel-tablero .col-"+(i+2)).children().get(+(l)).firstElementChild;
+              }else {
+                listDelete[aux+1] =$(".panel-tablero .col-"+(i)).children().get(+(l)).firstElementChild;
+                listDelete[aux+2] = $(".panel-tablero .col-"+(i+1)).children().get(+(l)).firstElementChild;
+                listDelete[aux+3] = $(".panel-tablero .col-"+(i+2)).children().get(+(l)).firstElementChild;
+                //console.log("aa " + listDelete[aux+3].value);
+              }
 
             } catch (e) {
               console.log("No se puede agregar a la lista el elemento a eliminar: " + e.message);
@@ -251,18 +258,19 @@ function findHorizontal(listDelete){
     }
   }
 
-// TODO: Eliminar log
   for (var i = 0; i < listDelete.length; i++) {
-    console.log("Horizontal" + i);
     console.log(listDelete[i]);
-  }
-  return listDelete;
 
+  }
+
+  for (var i = 0; i < listDelete.length; i++) {
+    if ((listDelete[i] != "" || listDelete[i] != null) || (listDelete[i] !="undefined") ) {
+      console.log("Posición: " + i);
+      console.log(listDelete[i]);
+    listDelete[i].remove();
+    }
+
+  }
 }
 
 // NOTE: ***********************************************************
-
-// TODO: Generar método para eliminar dulces
-function deleteCandies(rowMatch1,rowMatch2,rowMatch3){
-
-}
