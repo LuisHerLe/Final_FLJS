@@ -85,7 +85,7 @@ function getRowCandies(){
     //  setInterval(function(){findVertical()},150);
     findVertical(listDelete);
     findHorizontal(listDelete);
-    //deleteCandies(listDelete);
+
   }
 }
 
@@ -150,7 +150,6 @@ function findVertical(listDelete){
   var colMatch1 = "";
   var colMatch2 = "";
   var colMatch3 = "";
-
   var aux = "";
 
   for (var i = 1; i < 8; i++) {
@@ -167,21 +166,20 @@ function findVertical(listDelete){
 
         if (colMatch1 != null && colMatch2 != null && colMatch3 != null){
           if (colMatch1.value == colMatch2.value && colMatch2.value == colMatch3.value){
-            colMatch1=$(".panel-tablero .col-"+(i)).children().get(r).firstElementChild;
-            colMatch2=$(".panel-tablero .col-"+(i)).children().get(r+1).firstElementChild;
-            colMatch3=$(".panel-tablero .col-"+(i)).children().get(r+2).firstElementChild;
-
+            colMatch1=$(".panel-tablero .col-"+(i)).children().children().get(r);
+            colMatch2=$(".panel-tablero .col-"+(i)).children().children().get(r+1);
+            colMatch3=$(".panel-tablero .col-"+(i)).children().children().get(r+2);
 
             try {
               console.log("Si hay coincidencias de columna " + i + " Fila " + r);
               if (aux == 0 ) {
-                listDelete[aux] = colMatch1;
-                listDelete[aux+1] = colMatch2;
-                listDelete[aux+2] = colMatch3;
+                listDelete[aux] = $(".panel-tablero .col-"+(i)).children().get(r).firstElementChild;
+                listDelete[aux+1] = $(".panel-tablero .col-"+(i)).children().get(r+1).firstElementChild;
+                listDelete[aux+2] = $(".panel-tablero .col-"+(i)).children().get(r+2).firstElementChild;
               }else {
-                listDelete[aux+1] = colMatch1;
-                listDelete[aux+2] = colMatch2;
-                listDelete[aux+3] = colMatch3;
+                listDelete[aux+1] = $(".panel-tablero .col-"+(i)).children().get(r).firstElementChild;
+                listDelete[aux+2] = $(".panel-tablero .col-"+(i)).children().get(r+1).firstElementChild;
+                listDelete[aux+3] = $(".panel-tablero .col-"+(i)).children().get(r+2).firstElementChild;
               }
 
 
@@ -193,14 +191,15 @@ function findVertical(listDelete){
       }
     } catch (e) {
       console.log("Error al ubicar una columna: " + e.message);
+    }finally{
+      listDelete = listDelete.filter(function(listDelete){
+  return listDelete != undefined;
+  console.log("Lista de findVertical");
+  console.log(listDelete);
+});
     }
   }
 
-  for (var i = 0; i < listDelete.length; i++) {
-    if (listDelete[i] != null) {
-      //listDelete[i].remove();
-    }
-  }
   return listDelete;
 
 }
@@ -240,37 +239,76 @@ function findHorizontal(listDelete){
                 listDelete[aux] = $(".panel-tablero .col-"+(i)).children().get(+(l)).firstElementChild;
                 listDelete[aux+1] = $(".panel-tablero .col-"+(i+1)).children().get(+(l)).firstElementChild;
                 listDelete[aux+2] = $(".panel-tablero .col-"+(i+2)).children().get(+(l)).firstElementChild;
+
               }else {
                 listDelete[aux+1] =$(".panel-tablero .col-"+(i)).children().get(+(l)).firstElementChild;
                 listDelete[aux+2] = $(".panel-tablero .col-"+(i+1)).children().get(+(l)).firstElementChild;
                 listDelete[aux+3] = $(".panel-tablero .col-"+(i+2)).children().get(+(l)).firstElementChild;
-                //console.log("aa " + listDelete[aux+3].value);
+
+                //$(".panel-tablero .col-"+(i+2)).children().get(+(l)).firstElementChild.remove();
               }
 
             } catch (e) {
               console.log("No se puede agregar a la lista el elemento a eliminar: " + e.message);
+            }finally{
+                listDelete = listDelete.filter(function(listDelete){
+            return listDelete != undefined;
+            console.log("Lista de findVertical");
+            console.log(listDelete);
+          });
+
             }
           }
         }
       }
     } catch (e) {
       console.log("Error al ubicar una columna: " + e.message);
+    }finally{
+      listDelete = listDelete.filter(function(listDelete){
+  return listDelete != undefined;
+
+  console.log("Lista de findHorizontal");
+  console.log(listDelete);
+});
     }
   }
 
+// TODO: Eliminar Log
   for (var i = 0; i < listDelete.length; i++) {
     console.log(listDelete[i]);
 
   }
 
+// TODO: TERMINAR EL EFECTO!!!!
+function animateToDelete(listDelete[i]){
   for (var i = 0; i < listDelete.length; i++) {
-    if ((listDelete[i] != "" || listDelete[i] != null) || (listDelete[i] !="undefined") ) {
-      console.log("Posición: " + i);
-      console.log(listDelete[i]);
-    listDelete[i].remove();
-    }
-
+    listDelete[i]
   }
+  $(elemento).animate(
+    {
+      top: "+=400"
+    }, 500, function(){
+      deleteCandies(listDelete[i]);
+    }
+  )
+}
+
+deleteCandies(listDelete);
 }
 
 // NOTE: ***********************************************************
+function deleteCandies(listDelete){
+
+listDelete.filter(function(listDelete){
+  return listDelete !== undefined
+  console.log(listDelete);
+});
+
+  for (var i = 0; i < listDelete.length; i++) {
+
+      console.log("Posición: " + i);
+      console.log(listDelete[i]);
+    listDelete[i].remove();
+
+  }
+}
