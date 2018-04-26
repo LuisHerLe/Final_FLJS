@@ -193,10 +193,10 @@ function findVertical(listDelete){
       console.log("Error al ubicar una columna: " + e.message);
     }finally{
       listDelete = listDelete.filter(function(listDelete){
-  return listDelete != undefined;
-  console.log("Lista de findVertical");
-  console.log(listDelete);
-});
+        return listDelete != undefined;
+        console.log("Lista de findVertical");
+        console.log(listDelete);
+      });
     }
   }
 
@@ -251,11 +251,10 @@ function findHorizontal(listDelete){
             } catch (e) {
               console.log("No se puede agregar a la lista el elemento a eliminar: " + e.message);
             }finally{
-                listDelete = listDelete.filter(function(listDelete){
-            return listDelete != undefined;
-            console.log("Lista de findVertical");
-            console.log(listDelete);
-          });
+              listDelete = listDelete.filter(function(listDelete){
+                animateToDelete(listDelete);
+                return listDelete != undefined;
+              });
 
             }
           }
@@ -264,50 +263,46 @@ function findHorizontal(listDelete){
     } catch (e) {
       console.log("Error al ubicar una columna: " + e.message);
     }finally{
+
       listDelete = listDelete.filter(function(listDelete){
-  return listDelete != undefined;
+        return listDelete != undefined;
 
-  console.log("Lista de findHorizontal");
-  console.log(listDelete);
-});
+      });
     }
+    animateToDelete(listDelete);
   }
 
-// TODO: Eliminar Log
-  for (var i = 0; i < listDelete.length; i++) {
-    console.log(listDelete[i]);
-
-  }
-
-// TODO: TERMINAR EL EFECTO!!!!
-function animateToDelete(listDelete[i]){
-  for (var i = 0; i < listDelete.length; i++) {
-    listDelete[i]
-  }
-  $(elemento).animate(
-    {
-      top: "+=400"
-    }, 500, function(){
-      deleteCandies(listDelete[i]);
+  // TODO: TERMINAR EL EFECTO!!!!
+  function animateToDelete(listDelete){
+    for (var i = 0; i < listDelete.length; i++) {
+      parpadear();
     }
-  )
-}
+    function parpadear(){
+      //console.log(listDelete[i]);
+      //$(".row-1").get(0).children[0].fadeIn(500).delay(250).fadeOut(500, parpadear)
+      listDelete[i].fadeIn(500).delay(250).fadeOut(500, parpadear)
+      //listDelete[i].fadeIn(500,function(){
+        //listDelete[i].fadeOut(500);
+      //})
+    }
+    setInterval(deleteCandies(listDelete),100);
+  }
 
-deleteCandies(listDelete);
+
 }
 
 // NOTE: ***********************************************************
 function deleteCandies(listDelete){
 
-listDelete.filter(function(listDelete){
-  return listDelete !== undefined
-  console.log(listDelete);
-});
+  listDelete.filter(function(listDelete){
+    return listDelete !== undefined
+    console.log(listDelete);
+  });
 
   for (var i = 0; i < listDelete.length; i++) {
 
-      console.log("Posición: " + i);
-      console.log(listDelete[i]);
+    console.log("Posición: " + i);
+    console.log(listDelete[i]);
     listDelete[i].remove();
 
   }
