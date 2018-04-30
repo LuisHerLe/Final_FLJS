@@ -19,13 +19,13 @@ var listDelete = new Array();
 var findedH = "";
 var findedV = "";
 var aux = "";
+var mov = "";
 // ********************** FIN VARIABLES GLOBALES **********************
 
 // NOTE:Punto 6. Se inicia juego o se reinicia contenido al dar click al botón cuando este diga "Reiniciar"
 $(".btn-reinicio").click(function(){
   var contButton = $(".btn-reinicio").html();
   start = true;
-
   if (contButton == "Iniciar") {
     $(".btn-reinicio").html("Reiniciar");
 
@@ -73,7 +73,7 @@ function getRowCandies(){
 
       if ($(auxChildren).children().length == 0) { //Saber si el campo está vacío
         //console.log("Vacío col: " + auxCol + " con fila: " + auxRow);
-        var rowNew = $("<div class=row-"+r+"><img src='' alt=''></div>")
+        var rowNew = $("<div class=row-"+r+"><img id= class-"+i+"row-"+r+" src='' alt=''></div>")
         rowNew.appendTo(colName);
         getImgCandies(rowNew);
       }
@@ -103,9 +103,50 @@ function getImgCandies(rowNew){
 // NOTE: Punto 4: Función para temporizador usando p5
 function setup(start){
   if (start) {
-
     var counter = 0;
     var timeLeft = 120; //Está en segundos
+
+    // TODO: OJO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    $("img").draggable({
+    disabled: false,
+    containment: ".panel-tablero",
+    revert: true,
+    revertDuration: 0,
+    snap: ".elemento",
+    snapMode: "inner",
+    snapTolerance: 40,
+    start: function(event, ui){
+      mov=mov+1;
+      $("#movimientos-text").html(mov)
+    }
+  });
+}
+
+$("img").droppable({
+  drop: function (event, ui) {
+    var dropped = ui.draggable;
+    var droppedOn = this;
+    espera=0;
+    do{
+      espera=dropped.swap($(droppedOn));
+    }while(espera==0)
+    fingvertical()    //funcion buscar dulces vertical
+    findHorizontal()  //funcion busqueda dulces horizontal
+
+    if(listDelete.length != 0)
+    {
+      dropped.swap($(droppedOn));
+    }else
+    {
+      clearInterval(newdulces);
+      clearInterval(eliminar);   //desactivar funcion desplazamiento()
+      eliminar=setInterval(function(){eliminarhorver()},150)  //activar funcion eliminarhorver
+    }
+  },
+});
+
+    //OJO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     //Convertir a minutos + segundos
     function convertMinutes(s){
@@ -129,7 +170,7 @@ function setup(start){
     }
     setInterval(countDown, 1000);
   }
-}
+
 
 function endGame(){
   // NOTE: Punto 4: Se oculta el tablero de juego y el tiempo, adicional se agranda al 100% el ancho del panel de puntos
@@ -157,10 +198,10 @@ function findVertical(listDelete){
     try {
       //Se recorren las columnas
       for (var r = 0; r < 7; r++) {
-        aux = listDelete.length + r;
-        colMatch1=$(".panel-tablero .col-"+(i)).children().children().get(+(r)).attributes[0]
-        colMatch2=$(".panel-tablero .col-"+(i)).children().children().get(+(r+1)).attributes[0]
-        colMatch3=$(".panel-tablero .col-"+(i)).children().children().get(+(r+2)).attributes[0]
+        aux = listDelete.length;
+        colMatch1=$(".panel-tablero .col-"+(i)).children().children().get(+(r)).attributes[1]
+        colMatch2=$(".panel-tablero .col-"+(i)).children().children().get(+(r+1)).attributes[1]
+        colMatch3=$(".panel-tablero .col-"+(i)).children().children().get(+(r+2)).attributes[1]
 
         //var colMatch3=$(".col-"+(r+2)).children("img:nth-child("+i+")").attr("src")
 
@@ -172,15 +213,10 @@ function findVertical(listDelete){
 
             try {
               console.log("Si hay coincidencias de columna " + i + " Fila " + r);
-              if (aux == 0 ) {
                 listDelete[aux] = $(".panel-tablero .col-"+(i)).children().get(r).firstElementChild;
                 listDelete[aux+1] = $(".panel-tablero .col-"+(i)).children().get(r+1).firstElementChild;
                 listDelete[aux+2] = $(".panel-tablero .col-"+(i)).children().get(r+2).firstElementChild;
-              }else {
-                listDelete[aux+1] = $(".panel-tablero .col-"+(i)).children().get(r).firstElementChild;
-                listDelete[aux+2] = $(".panel-tablero .col-"+(i)).children().get(r+1).firstElementChild;
-                listDelete[aux+3] = $(".panel-tablero .col-"+(i)).children().get(r+2).firstElementChild;
-              }
+
 
 
             } catch (e) {
@@ -217,15 +253,17 @@ function findHorizontal(listDelete){
     try {
       //Se recorren las columnas
       for (var l = 0; l < 7; l++) {
-        if (listDelete.length ==0) {
+        /*if (listDelete.length ==0) {
           aux = listDelete.length;
         }else {
           aux = listDelete.length + 1;
-        }
+        }*/
 
-        rowMatch1=$(".panel-tablero .col-"+(i)).children().children().get(+(l)).attributes[0]
-        rowMatch2=$(".panel-tablero .col-"+(i+1)).children().children().get(+(l)).attributes[0]
-        rowMatch3=$(".panel-tablero .col-"+(i+2)).children().children().get(+(l)).attributes[0]
+        aux = listDelete.length;
+
+        rowMatch1=$(".panel-tablero .col-"+(i)).children().children().get(+(l)).attributes[1]
+        rowMatch2=$(".panel-tablero .col-"+(i+1)).children().children().get(+(l)).attributes[1]
+        rowMatch3=$(".panel-tablero .col-"+(i+2)).children().children().get(+(l)).attributes[1]
 
         if (rowMatch1 != null && rowMatch2 != null && rowMatch3 != null){
           if (rowMatch1.value == rowMatch2.value && rowMatch2.value == rowMatch3.value){
@@ -234,19 +272,9 @@ function findHorizontal(listDelete){
             rowMatch3=$(".panel-tablero .col-"+(i+2)).children().children().get(+(l));
 
             try {
-
-              if (aux == 0 ) {
                 listDelete[aux] = $(".panel-tablero .col-"+(i)).children().get(+(l)).firstElementChild;
                 listDelete[aux+1] = $(".panel-tablero .col-"+(i+1)).children().get(+(l)).firstElementChild;
                 listDelete[aux+2] = $(".panel-tablero .col-"+(i+2)).children().get(+(l)).firstElementChild;
-
-              }else {
-                listDelete[aux+1] =$(".panel-tablero .col-"+(i)).children().get(+(l)).firstElementChild;
-                listDelete[aux+2] = $(".panel-tablero .col-"+(i+1)).children().get(+(l)).firstElementChild;
-                listDelete[aux+3] = $(".panel-tablero .col-"+(i+2)).children().get(+(l)).firstElementChild;
-
-                //$(".panel-tablero .col-"+(i+2)).children().get(+(l)).firstElementChild.remove();
-              }
 
             } catch (e) {
               console.log("No se puede agregar a la lista el elemento a eliminar: " + e.message);
@@ -261,17 +289,31 @@ function findHorizontal(listDelete){
         }
       }
     } catch (e) {
-      console.log("Error al ubicar una columna: " + e.message);
+      console.log("Error al ubicar una columnas: " + e.message);
     }finally{
-
+console.log("Posición: " + "1");
       listDelete = listDelete.filter(function(listDelete){
         return listDelete != undefined;
 
       });
     }
+
     animateToDelete(listDelete);
   }
 
+  function animateToDelete(listDelete){
+
+var element = ""
+    for (var i = 0; i < listDelete.length; i++) {
+console.log(listDelete[i].attributes[0]);
+      element =listDelete[i].attributes[0];
+      console.log("Elemento");
+      console.log(element.value);
+      //$('#"+ element.value +"').fadeIn('fast').delay(5000).fadeOut('fast')
+      $("#" +element.value+ "").fadeIn('fast').delay(10).fadeOut('fast')
+    }
+}
+/*
   // TODO: TERMINAR EL EFECTO!!!!
   function animateToDelete(listDelete){
     for (var i = 0; i < listDelete.length; i++) {
@@ -280,15 +322,16 @@ function findHorizontal(listDelete){
     function parpadear(){
       //console.log(listDelete[i]);
       //$(".row-1").get(0).children[0].fadeIn(500).delay(250).fadeOut(500, parpadear)
-      listDelete[i].fadeIn(500).delay(250).fadeOut(500, parpadear)
+      //listDelete[i].fadeIn(500).delay(250).fadeOut(500, parpadear)
+      a.toggle("fade")
       //listDelete[i].fadeIn(500,function(){
         //listDelete[i].fadeOut(500);
       //})
     }
     setInterval(deleteCandies(listDelete),100);
-  }
+  }*/
 
-
+return
 }
 
 // NOTE: ***********************************************************
